@@ -1,12 +1,12 @@
 from .base import *
 
 # Decouple para variables de entorno
-from decouple import config
+from decouple import config, Csv
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=list, default=[])
+ALLOWED_HOSTS = []
 
 
 # Database
