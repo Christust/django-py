@@ -31,6 +31,7 @@ def user_api_view(request):
         user_serializer = UserListSerializer(users, many=True)
         return Response(user_serializer.data)
     if request.method == "POST":
+        print(request.data)
         user_serializer = UserSerializer(data=request.data)
         if user_serializer.is_valid():
             user_serializer.save()

@@ -187,3 +187,57 @@ def user_api_view(request):
         else:
             return Response(user_serializer.errors, status=500)
 ```
+
+
+## Serializers
+Los serializadores se usan para convertir un modelo de Django en JSON y viceversa, dependiendo de como se use.
+
+Un serializador del modelo User se ve asi:
+```
+from rest_framework import serializers
+from apps.users.models import User
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"
+
+    def validate_email(self, value):
+        if "dev" in value:
+            raise serializers.ValidationError("El email no puede contener dev")
+        return value
+
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        update_user = super().update(instance, validated_data)
+        update_user.set_password(validated_data["password"])
+        update_user.save()
+        return update_user
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "name", "last_name"]
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "user": instance.username,
+            "name": instance.name,
+            "last_name": instance.last_name,
+        }
+```
+
+En este ejemplo uno se utiliza para crear y modificar usuarios, y el otro para enlistar usuarios.
+
+Podemos validar los datos que recibimos con validate_field (siendo filed el atributo que deseamos validar)
+
+El metodo to_representation se usa para que la respuesta tenga la forma que nosotros coloquemos en el return.
+
