@@ -1,28 +1,36 @@
 # Iniciar el proyecto
 
 Creamos un entorno virtual con las siguientes instalaciones:
+
 ```
     django = "*"
     djangorestframework = "*"
     django-simple-history = "*"
     pillow = "*"
+    python-decouple = "*"
+    drf-yasg = "*"
+    django-cors-headers = "*"
 ```
 
 Creamos el proyecto:
+
 ```
 django-admin startproject <nombre del proyecto>
 ```
 
 Agregamos las aplicaciones de terceros a nuestras apps instaladas:
+
 ```
 INSTALLED_APPS = [
     ...,
     "rest_framework",
     "simple_history",
+    "drf_yasg",
 ]
 ```
 
 Agregamos middleware de simple_history:
+
 ```
 MIDDLEWARE = [
     ...,
@@ -30,13 +38,56 @@ MIDDLEWARE = [
 ]
 ```
 
+Agregamos Swagger a nuestro archivo de rutas principal:
+
+```
+// urls.py
+...
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+...
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API",
+        default_version="v1",
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="christos.marroquin@hotmail.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+...
+
+urlpatterns = [
+    ...,
+    re_path(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    ...,
+]
+```
+
 Creamos la carpeta apps.
-Dentro de ella creamos el archivo "__init__.py", nos posicionamos en ella y creamos la app que administrara los usuarios:
+Dentro de ella creamos el archivo "**init**.py", nos posicionamos en ella y creamos la app que administrara los usuarios:
+
 ```
 django-admin startapp users
 ```
 
 Asi como en todas las apps creadas en una carpeta modificaremos su apps.py agregando el nombre de la carpeta al string "name", en nuestro caso la carpeta se llama apps:
+
 ```
 # apps.py
 
@@ -46,6 +97,7 @@ class UsersConfig(AppConfig):
 ```
 
 Creamos el modelo para usuarios junto con su clase manager:
+
 ```
 # models.py
 
@@ -96,6 +148,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 ```
 
 Agregamos nuestra app a la lista de apps instaladas en settings:
+
 ```
 INSTALLED_APPS = [
     ...,
@@ -104,18 +157,21 @@ INSTALLED_APPS = [
 ```
 
 Agremos a nuestro settings.py la variable de entorno "AUTH_USER_MODEL" con el valor del modelo de nuestra app que manejara el usuario, antepuesto por el nombre de su app:
+
 ```
 AUTH_USER_MODEL = "users.User"
 ```
 
 Ahora podremos correr las migraciones:
+
 ```
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-Crearemos una vista para devolver los usuarios registrados. Primero en la app usuarios borramos los archivos views.py y test.py, creamos una carpeta llamada api y dentro de ella cuatro archivos llamados __init__.py, api.py, serializers.py y urls.py.
+Crearemos una vista para devolver los usuarios registrados. Primero en la app usuarios borramos los archivos views.py y test.py, creamos una carpeta llamada api y dentro de ella cuatro archivos llamados **init**.py, api.py, serializers.py y urls.py.
 Dentro de serializers.py colocamos:
+
 ```
 from rest_framework import serializers
 from apps.users.models import User
@@ -124,11 +180,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = "__all__"
-    
+
 ```
+
 Con esto creamos un serializador sencillo para el modelo User, este nos sirve para convertir a json todos los campos del modelo.
 
 Dentro de api.py colocamos lo siguiente:
+
 ```
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -146,6 +204,7 @@ class UserApiView(APIView):
 Con esto creamos una vista que hereda de APIView y devuelve un Response el cual contiene la data del json generado a partir de la consulta del modelo Users, es importante utilizar el parametro many en True si es que es mas de una instancia, si no se usa el serializador pensara que se trata de un solo elemento.
 
 Ahora podremos escribir el archivo urls:
+
 ```
 from django.urls import path
 from apps.users.api.api import UserApiView
@@ -156,6 +215,7 @@ urlpatterns = [
 ```
 
 El cual enlazaremos a nuestro archivo urls del proyecto:
+
 ```
 from django.contrib import admin
 from django.urls import path, include
@@ -167,6 +227,7 @@ urlpatterns = [
 ```
 
 Si nosotros usamos las vistas basadas en funciones debemos usar el decorador que nos brinda rest para delimitar que metodos permitiremos en nuestras funciones:
+
 ```
 ...
 from rest_framework.decorators import api_view
@@ -174,7 +235,7 @@ from django.shortcuts import get_object_or_404
 
 @api_view(["GET", "POST"])
 def user_api_view(request):
-    
+
     if request.method == "GET":
         users = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
@@ -188,11 +249,12 @@ def user_api_view(request):
             return Response(user_serializer.errors, status=500)
 ```
 
-
 ## Serializers
+
 Los serializadores se usan para convertir un modelo de Django en JSON y viceversa, dependiendo de como se use.
 
 Un serializador del modelo User se ve asi:
+
 ```
 from rest_framework import serializers
 from apps.users.models import User
@@ -240,4 +302,3 @@ En este ejemplo uno se utiliza para crear y modificar usuarios, y el otro para e
 Podemos validar los datos que recibimos con validate_field (siendo filed el atributo que deseamos validar)
 
 El metodo to_representation se usa para que la respuesta tenga la forma que nosotros coloquemos en el return.
-
