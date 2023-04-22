@@ -109,3 +109,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Colocamos la variable de entorno AUTH_USER_MODEL con nuestro modelo para usuarios personalizado
 AUTH_USER_MODEL = "users.User"
+
+# Expiracion del token
+TOKEN_EXPIRED_AFTER_SECONDS = 10

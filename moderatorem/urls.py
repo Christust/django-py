@@ -5,7 +5,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from apps.users.views import Login
+from apps.users.views import Login, Logout
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -20,9 +20,7 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
-
-urlpatterns = [
-    # Swagger
+swagger_routes = [
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
@@ -34,9 +32,12 @@ urlpatterns = [
         name="schema-swagger-ui",
     ),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
-    # Normal routes
-    path("", Login.as_view(), name="login"),
+]
+
+urlpatterns = [
+    path("login/", Login.as_view(), name="login"),
+    path("logout/", Logout.as_view(), name="logout"),
     path("admin/", admin.site.urls),
     path("user/", include("apps.users.api.urls")),
     path("product/", include("apps.products.api.routers")),
-]
+] + swagger_routes

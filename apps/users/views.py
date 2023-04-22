@@ -89,12 +89,22 @@ class Login(ObtainAuthToken):
 
 class Logout(APIView):
     def post(self, request):
-        token = request.data["token"]
-        token = Token.objects.filter(key=token).first()
-        if token:
-            user = token.user
+        try:
+            token = request.data["token"]
+            token = Token.objects.filter(key=token).first()
+            if token:
+                user = token.user
+                delete_sessions(user)
+                session_message = "Sesiones eliminadas"
 
-            delete_sessions(user)
+                # Borramos el token ya existente y creamos uno nuevo
+                token.delete()
+                token_message = "Token eliminado"
 
-            # Borramos el token ya existente y creamos uno nuevo
-            token.delete()
+                return Response(
+                    {"token_message": token_message, "session_message": session_message}
+                )
+
+            return Response("No se encontro usuario", status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response("No se envio token", status.HTTP_400_BAD_REQUEST)

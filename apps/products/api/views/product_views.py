@@ -65,7 +65,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def delete(self, request, pk):
         product = self.queryset.filter(id=pk).first()
-        print(product)
         if product:
             product.state = False
             product.save()
