@@ -97,7 +97,6 @@ class Product(BaseModel):
         MeasureUnit,
         on_delete=models.CASCADE,
         verbose_name="Unidad de medida",
-        default=None,
     )
     category = models.ForeignKey(
         CategoryProduct, on_delete=models.CASCADE, verbose_name="Categoria"

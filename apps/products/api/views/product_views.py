@@ -3,6 +3,7 @@ from apps.products.api.serializers.product_serializer import ProductSerializer
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework import viewsets
+from apps.users.authentication_mixin import Authentication
 
 # ! Se sutituyen por ListCreateAPIView
 # class ProductListAPIView(GeneralListAPIView):
@@ -12,10 +13,10 @@ from rest_framework import viewsets
 # class ProductCreateAPIView(generics.CreateAPIView):
 #     serializer_class = ProductSerializer
 
-
-class ProductListCreateAPIView(generics.ListCreateAPIView):
-    serializer_class = ProductSerializer
-    queryset = serializer_class.Meta.model.objects.filter(state=True)
+# ! Se sustituye por ModelViewSet
+# class ProductListCreateAPIView(generics.ListCreateAPIView):
+#     serializer_class = ProductSerializer
+#     queryset = serializer_class.Meta.model.objects.filter(state=True)
 
 
 # ! Se sustituyen por RetrieveUpdateDestroyAPIView
@@ -43,27 +44,29 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 #     serializer_class = ProductSerializer
 #     queryset = serializer_class.Meta.model.objects.filter(state=True)
 
+# ! Se sustituye por ModelViewSet
+# class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+#     serializer_class = ProductSerializer
+#     queryset = serializer_class.Meta.model.objects.filter(state=True)
 
-class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+#     def delete(self, request, pk):
+#         product = self.queryset.filter(id=pk).first()
+#         print(product)
+#         if product:
+#             product.state = False
+#             product.save()
+#             product_serializer = self.serializer_class(product)
+#             return Response(product_serializer.data, status=status.HTTP_200_OK)
+#         return Response("No existe el producto", status=status.HTTP_404_NOT_FOUND)
+
+
+class ProductViewSet(Authentication,viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = serializer_class.Meta.model.objects.filter(state=True)
 
-    def delete(self, request, pk):
-        product = self.queryset.filter(id=pk).first()
-        print(product)
-        if product:
-            product.state = False
-            product.save()
-            product_serializer = self.serializer_class(product)
-            return Response(product_serializer.data, status=status.HTTP_200_OK)
-        return Response("No existe el producto", status=status.HTTP_404_NOT_FOUND)
-
-
-class ProductViewSet(viewsets.ModelViewSet):
-    serializer_class = ProductSerializer
-    queryset = serializer_class.Meta.model.objects.filter(state=True)
-
-    def delete(self, request, pk):
+    def destroy(self, request, pk):
+        print("Delete")
+        print(self.user)
         product = self.queryset.filter(id=pk).first()
         if product:
             product.state = False

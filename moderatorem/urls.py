@@ -5,7 +5,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from apps.users.views import Login, Logout
+from apps.users.views import Login, Logout, UserToken
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -37,6 +37,7 @@ swagger_routes = [
 urlpatterns = [
     path("login/", Login.as_view(), name="login"),
     path("logout/", Logout.as_view(), name="logout"),
+    path("refresh_token/", UserToken.as_view(), name="refresh_token"),
     path("admin/", admin.site.urls),
     path("user/", include("apps.users.api.urls")),
     path("product/", include("apps.products.api.routers")),

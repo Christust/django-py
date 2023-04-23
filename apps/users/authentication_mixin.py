@@ -18,13 +18,13 @@ class Authentication(object):
                 return None
             token_expire = ExpireTokenAuthentication()
             (
-                user,
+                self.user,
                 token,
                 message,
                 self.user_token_expired,
             ) = token_expire.authenticate_credentials(token)
-            if user != None and token != None:
-                return user
+            if self.user != None and token != None:
+                return self.user
             return message
         return None
 

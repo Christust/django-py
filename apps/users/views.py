@@ -33,6 +33,22 @@ def delete_sessions(user):
                 session.delete()
 
 
+class UserToken(APIView):
+    def get(self, request):
+        username = request.GET.get("username")
+        try:
+            user_token = Token.objects.get(
+                user=UserTokenSerializer.Meta.model.objects.filter(
+                    username=username
+                ).first()
+            )
+            return Response({"token": user_token.key})
+        except:
+            return Response(
+                {"error": "Credenciales incorrectas"}, status.HTTP_400_BAD_REQUEST
+            )
+
+
 # Creeamos la clase Login la cual hereda de ObtainAuthToken
 class Login(ObtainAuthToken):
     def post(self, request):
