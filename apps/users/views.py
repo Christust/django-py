@@ -77,6 +77,7 @@ class Login(ObtainAuthToken):
                         {
                             "token": token.key,
                             "user": user_serializer.data,
+                            "created": created,
                         },
                         status.HTTP_201_CREATED,
                     )
@@ -92,6 +93,7 @@ class Login(ObtainAuthToken):
                     {
                         "token": token.key,
                         "user": user_serializer.data,
+                        "created": False,
                     },
                     status=status.HTTP_200_OK,
                 )
@@ -100,7 +102,9 @@ class Login(ObtainAuthToken):
             return Response("Usuario inactivo", status.HTTP_401_UNAUTHORIZED)
 
         # Si no es valido el payload respondemos el error
-        return Response("No valido", status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "Credenciales incorrectas"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
 
 class Logout(APIView):
