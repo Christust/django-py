@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = "django-insecure-w5cjp!#2d&ar)q=y!*h6@4ojh5*!&-*axw6@dyrrzxyw7)=u%+"
 
 # Application definition
 BASE_APPS = [
@@ -86,11 +86,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3001",
+    "http://localhost:3000",
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3001",
+    "http://localhost:3000",
 ]
 
 
