@@ -87,10 +87,12 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://react-js-a9aca.web.app/",
 ]
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
+    "https://react-js-a9aca.web.app/",
 ]
 
 
