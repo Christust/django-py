@@ -1,8 +1,4 @@
 from apps.products.models import Product
-from apps.products.api.serializers.general_serializer import (
-    MeasureUnitSerializer,
-    CategoryProductSerializer,
-)
 from rest_framework import serializers
 
 

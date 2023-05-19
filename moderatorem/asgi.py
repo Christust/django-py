@@ -9,8 +9,13 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 
 import os
 
+# Decouple para variables de entorno
+from decouple import config
+
+mode = config("MODE", default="production")
+
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'moderatorem.settings.production')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'moderatorem.settings.{mode}')
 
 application = get_asgi_application()

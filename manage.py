@@ -3,10 +3,15 @@
 import os
 import sys
 
+# Decouple para variables de entorno
+from decouple import config
+
+mode = config("MODE", default="production")
+
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'moderatorem.settings.production')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'moderatorem.settings.{mode}')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

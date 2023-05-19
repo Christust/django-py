@@ -1,8 +1,5 @@
 from pathlib import Path
 
-# Decouple para variables de entorno
-from decouple import config
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -31,6 +28,7 @@ THIRD_APPS = [
     "simple_history",
     "drf_yasg",
     "corsheaders",
+    "rest_framework_simplejwt",
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -87,12 +85,22 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://react-js-a9aca.web.app/",
+    "https://react-js-a9aca.web.app",
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
 
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
-    "https://react-js-a9aca.web.app/",
+    "https://react-js-a9aca.web.app",
 ]
 
 
@@ -120,6 +128,3 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Colocamos la variable de entorno AUTH_USER_MODEL con nuestro modelo para usuarios personalizado
 AUTH_USER_MODEL = "users.User"
-
-# Expiracion del token
-TOKEN_EXPIRED_AFTER_SECONDS = 60

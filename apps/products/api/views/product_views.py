@@ -1,9 +1,8 @@
 # from apps.base.api import GeneralListAPIView
 from apps.products.api.serializers.product_serializer import ProductSerializer
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets
-from apps.users.authentication_mixin import Authentication
 
 # ! Se sutituyen por ListCreateAPIView
 # class ProductListAPIView(GeneralListAPIView):
@@ -60,7 +59,7 @@ from apps.users.authentication_mixin import Authentication
 #         return Response("No existe el producto", status=status.HTTP_404_NOT_FOUND)
 
 
-class ProductViewSet(Authentication,viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     queryset = serializer_class.Meta.model.objects.filter(state=True)
 
