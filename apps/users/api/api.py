@@ -1,8 +1,6 @@
 # Views para trabajar con clases APIView
 from rest_framework import viewsets
 
-from rest_framework.permissions import IsAuthenticated
-
 # Serializador y modelo para trabajar con respuestas
 from apps.users.api.serializers import UserSerializer
 
