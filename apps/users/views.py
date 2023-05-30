@@ -38,10 +38,11 @@ class Login(TokenObtainPairView):
     
 class Logout(GenericAPIView):
     def post(self, request):
-        user = User.objects.filter(id=request.data.get("user", "")).first()
-        if user:
-            RefreshToken.for_user(user)
-            return Response({
-                "message": "Sesion cerrada correctamente"
-            }, status.HTTP_200_OK)
-        return Response({"error": "Usuario inexistente"}, status.HTTP_400_BAD_REQUEST)
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
